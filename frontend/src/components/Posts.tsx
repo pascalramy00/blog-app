@@ -7,8 +7,7 @@ const Posts = ({ posts }: { posts: Post[] }) => {
       {posts.map(({ id, title, content }) => {
         return (
           <li key={id}>
-            <h2>{title}</h2>
-
+            <h2 className="font-bold">{title}</h2>
             <p>{content}</p>
           </li>
         );

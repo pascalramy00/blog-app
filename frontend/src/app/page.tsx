@@ -10,7 +10,7 @@ export default async function Home() {
 
   return (
     <div className="">
-      <h1>My Blog</h1>
+      <h1 className="font-bold">My Blog</h1>
       <Posts posts={posts} />
       {/* For recurrent client side fetching. Best to remove revalidate in this case. */}
       {/* <ClientPosts initialPosts={posts}></ClientPosts> */}

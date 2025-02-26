@@ -14,10 +14,26 @@ export const getAllAuthors = async (req: Request, res: Response) => {
 
 export const createAuthor = async (req: Request, res: Response) => {
   try {
-    const { email, password_hash, bio } = req.body;
+    const {
+      email,
+      password_hash,
+      bio,
+      username,
+      first_name,
+      last_name,
+      profile_picture_url,
+    } = req.body;
     const newAuthor = await db
       .insert(users)
-      .values({ email, password_hash, bio })
+      .values({
+        email,
+        password_hash,
+        bio,
+        username,
+        profile_picture_url,
+        first_name,
+        last_name,
+      })
       .returning();
     res.status(201).json(newAuthor);
   } catch (e) {
