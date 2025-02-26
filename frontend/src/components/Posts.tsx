@@ -8,6 +8,7 @@ const Posts = ({ posts }: { posts: Post[] }) => {
         return (
           <li key={id}>
             <h2>{title}</h2>
+
             <p>{content}</p>
           </li>
         );

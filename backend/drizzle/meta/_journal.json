@@ -1,0 +1,34 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1740602256568,
+      "tag": "0000_luxuriant_rick_jones",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1740602944157,
+      "tag": "0001_luxuriant_vulcan",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1740603034118,
+      "tag": "0002_outstanding_nextwave",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1740604894497,
+      "tag": "0003_legal_magneto",
+      "breakpoints": true
+    }
+  ]
+}
