@@ -2,6 +2,7 @@
 node_modules/
 
 # Ignore environment variables
+.env.local
 .env
 
 # Ignore build folders

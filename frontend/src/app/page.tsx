@@ -1,23 +1,10 @@
-"use client";
+import type { Post } from "@/types/types";
+import { fetchPosts } from "@/utils/api";
 
-import { useEffect, useState } from "react";
-import api from "@/utils/api";
+export const revalidate = 10;
 
-export default function Home() {
-  const [posts, setPosts] = useState([]);
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await api.get("/posts");
-        setPosts(response.data);
-      } catch (error) {
-        console.error("Failed to fetch posts:", error);
-      }
-    };
-
-    fetchPosts();
-  });
+export default async function Home() {
+  const posts: Post[] = await fetchPosts();
 
   return (
     <div className="">

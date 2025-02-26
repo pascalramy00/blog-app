@@ -7,30 +7,21 @@ export const getAllAuthors = async (req: Request, res: Response) => {
     const allAuthors = await db.select().from(users);
     res.json(allAuthors);
   } catch (e) {
-    console.error(e);
+    console.error("Error fetching authors:", e); // Log the error
     res.status(500).json({ error: "Failed to fetch authors." });
   }
 };
 
 export const createAuthor = async (req: Request, res: Response) => {
-  const { email, password_hash } = req.body;
-
-  if (!email || !password_hash) {
-    return res.status(400).json({ error: "Email and password are required" });
-  }
-
   try {
+    const { email, password_hash, bio } = req.body;
     const newAuthor = await db
       .insert(users)
-      .values({
-        email,
-        password_hash,
-      })
+      .values({ email, password_hash, bio })
       .returning();
-
-    res.status(201).json(newAuthor[0]);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to create author" });
+    res.status(201).json(newAuthor);
+  } catch (e) {
+    console.error("Error creating author:", e);
+    res.status(500).json({ error: "Failed to create author." });
   }
 };

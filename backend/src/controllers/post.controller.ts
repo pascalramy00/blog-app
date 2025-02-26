@@ -12,7 +12,7 @@ export const getAllPosts = async (req: Request, res: Response) => {
   }
 };
 
-export const createPost = async (req: Request, res: Response) => {
+export const createPost = async (req: Request, res: Response): Promise<any> => {
   const { title, content, author_id } = req.body;
 
   if (!title || !content || !author_id) {
