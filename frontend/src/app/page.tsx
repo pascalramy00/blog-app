@@ -1,7 +1,9 @@
 import type { Post } from "@/types/types";
 import { fetchPosts } from "@/utils/api";
+import Posts from "@/components/Posts";
+// import ClientPosts from "@/components/ClientPosts";
 
-export const revalidate = 10;
+export const revalidate = 84600;
 
 export default async function Home() {
   const posts: Post[] = await fetchPosts();
@@ -9,16 +11,9 @@ export default async function Home() {
   return (
     <div className="">
       <h1>My Blog</h1>
-      <ul>
-        {posts.map(({ id, title, content }) => {
-          return (
-            <li key={id}>
-              <h2>{title}</h2>
-              <p>{content}</p>
-            </li>
-          );
-        })}
-      </ul>
+      <Posts posts={posts} />
+      {/* For recurrent client side fetching. Best to remove revalidate in this case. */}
+      {/* <ClientPosts initialPosts={posts}></ClientPosts> */}
     </div>
   );
 }
