@@ -1,0 +1,1 @@
+CREATE INDEX "slug_idx" ON "posts" USING btree ("slug");
