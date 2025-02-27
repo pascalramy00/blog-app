@@ -1,4 +1,4 @@
-import type { Post } from "@/lib/types/types";
+import type { Post, PostWithAuthorAndCategories } from "@/lib/types/types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -8,7 +8,7 @@ if (!API_BASE_URL) {
   );
 }
 
-export async function fetchPosts(): Promise<Post[]> {
+export async function fetchPosts(): Promise<PostWithAuthorAndCategories[]> {
   const response = await fetch(`${API_BASE_URL}/posts`);
   if (!response.ok) {
     throw new Error("Failed to fetch posts.");

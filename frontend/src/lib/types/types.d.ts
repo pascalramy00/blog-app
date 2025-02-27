@@ -31,11 +31,30 @@ export interface Category {
   id: number;
   name: string;
   slug: string;
-  created_at: Date;
-  updated_at: Date;
+  created_at?: Date;
+  updated_at?: Date;
 }
 
 export interface PostCategory {
   post_id: number;
   category_id: number;
+}
+
+export interface Author {
+  id: number;
+  username: string;
+  first_name?: string;
+  last_name?: string;
+}
+
+export interface PostWithAuthorAndCategories {
+  id: number;
+  title: string;
+  content: string;
+  excerpt: string;
+  slug: string;
+  created_at: Date;
+  updated_at: Date;
+  author: Author;
+  categories: Category[];
 }

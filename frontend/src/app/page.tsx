@@ -1,4 +1,4 @@
-import type { Post } from "@/lib/types/types";
+import type { PostWithAuthorAndCategories } from "@/lib/types/types";
 import { fetchPosts } from "@/utils/api";
 import Posts from "@/components/Posts";
 // import ClientPosts from "@/components/ClientPosts";
@@ -6,7 +6,7 @@ import Posts from "@/components/Posts";
 export const revalidate = 84600;
 
 export default async function Home() {
-  const posts: Post[] = await fetchPosts();
+  const posts: PostWithAuthorAndCategories[] = await fetchPosts();
 
   return (
     <div className="">
