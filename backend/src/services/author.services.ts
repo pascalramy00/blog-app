@@ -7,7 +7,6 @@ export const fetchAllAuthors = async () => {
   try {
     return await db.select().from(users);
   } catch (error) {
-    console.error("Error fetching all authors:", error);
     throw new DatabaseError("Failed to fetch authors.");
   }
 };
@@ -16,7 +15,6 @@ export const fetchAuthorByUsername = async (username: string) => {
   try {
     return [await db.select().from(users).where(eq(users.username, username))];
   } catch (error) {
-    console.error("Error fetching author by username:", error);
     throw new AuthorNotFoundError();
   }
 };
@@ -46,7 +44,6 @@ export const createAuthor = async (
 
     return newAuthor;
   } catch (error) {
-    console.error("Error creating author:", error);
     if (error instanceof AuthorNotFoundError) {
       throw error;
     }

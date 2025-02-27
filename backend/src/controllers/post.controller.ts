@@ -4,23 +4,14 @@ import {
   fetchPostBySlug,
   createNewPost,
 } from "../services/post.services";
-import {
-  PostNotFoundError,
-  InvalidCategoryIdsError,
-  DatabaseError,
-  InputValidationError,
-} from "../errors";
+import { InputValidationError } from "../errors";
 
 export const getAllPosts = async (req: Request, res: Response) => {
   try {
     const posts = await fetchAllPosts();
     res.status(200).json(posts);
   } catch (error) {
-    if (error instanceof DatabaseError) {
-      console.error(error);
-      res.status(500).json({ error: error.message });
-    }
-    res.status(500).json({ error: "An unexpected error occurred." });
+    throw error;
   }
 };
 
@@ -33,14 +24,7 @@ export const getPost = async (req: Request, res: Response): Promise<any> => {
     }
     res.status(200).json(post);
   } catch (error) {
-    if (error instanceof PostNotFoundError) {
-      res.status(404).json({ error: error.message });
-    } else if (error instanceof DatabaseError) {
-      console.error(error);
-      res.status(500).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: "An unexpected error occured." });
-    }
+    throw error;
   }
 };
 
@@ -50,9 +34,9 @@ export const createPost = async (req: Request, res: Response): Promise<any> => {
 
   try {
     if (!title || !content || !author_id) {
-      return res
-        .status(400)
-        .json({ error: "Title, content, and author_id are required." });
+      throw new InputValidationError(
+        "Title, content and author_id are required."
+      );
     }
 
     const newPost = await createNewPost(
@@ -65,17 +49,6 @@ export const createPost = async (req: Request, res: Response): Promise<any> => {
     );
     res.status(201).json(newPost);
   } catch (error) {
-    if (
-      error instanceof DatabaseError ||
-      error instanceof InvalidCategoryIdsError ||
-      error instanceof InputValidationError
-    )
-      res.status(400).json({ error: error.message });
-    else if (error instanceof DatabaseError) {
-      console.error(error);
-      res.status(500).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: "An unexpected error occurred." });
-    }
+    throw error;
   }
 };

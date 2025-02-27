@@ -57,7 +57,6 @@ export const fetchAllPosts = async () => {
 
     return Object.values(postsMap);
   } catch (error) {
-    console.error("Error fetching all posts:", error);
     throw new DatabaseError("Failed to fetch posts.");
   }
 };
@@ -71,7 +70,6 @@ export const fetchPostBySlug = async (slug: string) => {
     }
     return post;
   } catch (error) {
-    console.error("Error fetching post by slug:", error);
     if (error instanceof PostNotFoundError) throw error;
     throw new DatabaseError("Failed to fetch post by slug.");
   }
@@ -172,7 +170,6 @@ export const createNewPost = async (
       categories: assignedCategories,
     };
   } catch (error) {
-    console.error("Error creating post:", error);
     if (
       error instanceof AuthorNotFoundError ||
       error instanceof InvalidCategoryIdsError
