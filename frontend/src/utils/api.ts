@@ -17,7 +17,7 @@ export async function fetchPosts(): Promise<Post[]> {
   return response.json();
 }
 
-export async function fetchPost(slug: string): Promise<Post[]> {
+export async function fetchPost(slug: string): Promise<Post> {
   const response = await fetch(`${API_BASE_URL}/posts/${slug}`);
   if (!response.ok) {
     throw new Error("Failed to fetch post.");

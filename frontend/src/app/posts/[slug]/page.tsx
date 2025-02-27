@@ -1,21 +1,19 @@
 import React from "react";
 import { fetchPost } from "@/utils/api";
+import type { Post } from "@/types/types";
 
 const PostPage = async ({ params }: { params: { slug: string } }) => {
   const { slug } = await params;
-  const post = await fetchPost(slug);
-
-  if (!post[0]) {
+  const post: Post = await fetchPost(slug);
+  if (!post) {
     return <p>Post not found</p>;
   }
 
-  const { title, created_at, content } = post[0];
-
   return (
     <div className="min-h-screen">
-      <h1>{title}</h1>
-      <p>{created_at}</p>
-      <p>{content}</p>
+      <h1>{post.title}</h1>
+      <p>{post.created_at}</p>
+      <p>{post.content}</p>
     </div>
   );
 };

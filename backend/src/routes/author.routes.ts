@@ -1,9 +1,14 @@
 import express from "express";
-import { createAuthor, getAllAuthors } from "../controllers/author.controller";
+import {
+  createAuthorHandler,
+  getAllAuthorsHandler,
+  getAuthorByUsernameHandler,
+} from "../controllers/author.controller";
 
 const router = express.Router();
 
-router.get("/", getAllAuthors);
-router.post("/", createAuthor);
+router.get("/", getAllAuthorsHandler);
+router.get("/:username", getAuthorByUsernameHandler);
+router.post("/", createAuthorHandler);
 
 export default router;
