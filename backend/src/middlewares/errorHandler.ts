@@ -9,6 +9,10 @@ export const errorHandler = (
 ) => {
   console.log("Error:", error);
 
+  if (error instanceof errors.DuplicateCategoryError) {
+    res.status(409).json({ error: error.message });
+  }
+
   if (
     error instanceof errors.InputValidationError ||
     error instanceof errors.InvalidCategoryIdsError
