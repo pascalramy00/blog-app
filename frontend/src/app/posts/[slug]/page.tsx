@@ -1,6 +1,6 @@
 import React from "react";
 import { fetchPost } from "@/utils/api";
-import type { Post } from "@/types/types";
+import type { Post } from "@/lib/types/types";
 
 const PostPage = async ({ params }: { params: { slug: string } }) => {
   const { slug } = await params;

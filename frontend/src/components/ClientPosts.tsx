@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import type { Post } from "@/types/types";
+import type { Post } from "@/lib/types/types";
 import { fetchPosts } from "@/utils/api";
 
 const ClientPosts = ({ initialPosts }: { initialPosts: Post[] }) => {

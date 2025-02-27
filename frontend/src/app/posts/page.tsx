@@ -1,7 +1,7 @@
 import React from "react";
 import Posts from "@/components/Posts";
 import { fetchPosts } from "@/utils/api";
-import type { Post } from "@/types/types";
+import type { Post } from "@/lib/types/types";
 
 const PostsPage = async () => {
   const posts: Post[] = await fetchPosts();

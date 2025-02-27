@@ -1,4 +1,4 @@
-import type { Post } from "@/types/types";
+import type { Post } from "@/lib/types/types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 

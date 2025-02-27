@@ -1,4 +1,4 @@
-import type { Post } from "@/types/types";
+import type { Post } from "@/lib/types/types";
 import { fetchPosts } from "@/utils/api";
 import Posts from "@/components/Posts";
 // import ClientPosts from "@/components/ClientPosts";
