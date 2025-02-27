@@ -1,4 +1,4 @@
-import { UserRole, PostStatus } from "@/lib/enums";
+import { UserRole, PostStatus } from "../enums";
 
 export interface User {
   id: number;
@@ -51,7 +51,7 @@ export interface PostWithAuthorAndCategories {
   id: number;
   title: string;
   content: string;
-  excerpt: string;
+  excerpt?: string;
   slug: string;
   created_at: Date;
   updated_at: Date;

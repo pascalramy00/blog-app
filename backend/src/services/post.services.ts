@@ -8,6 +8,7 @@ import {
   InvalidCategoryIdsError,
   AuthorNotFoundError,
 } from "../errors";
+import { PostWithAuthorAndCategories } from "@shared/types";
 
 // Fetch all posts with author and category details
 export const fetchAllPosts = async () => {

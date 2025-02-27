@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 
-import { PostWithAuthorAndCategories } from "@/lib/types/types";
+import { PostWithAuthorAndCategories } from "../../../shared/types";
 
 const Posts = ({ posts }: { posts: PostWithAuthorAndCategories[] }) => {
   return (
