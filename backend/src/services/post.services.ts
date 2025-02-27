@@ -9,6 +9,7 @@ import {
   AuthorNotFoundError,
 } from "../errors";
 import { PostWithAuthorAndCategories } from "@shared/types";
+import { PostStatus } from "@shared/enums";
 
 // Fetch all posts with author and category details
 export const fetchAllPosts = async () => {
@@ -73,6 +74,35 @@ export const fetchPostBySlug = async (slug: string) => {
   } catch (error) {
     if (error instanceof PostNotFoundError) throw error;
     throw new DatabaseError("Failed to fetch post by slug.");
+  }
+};
+
+export const deletePostBySlug = async (slug: string) => {
+  try {
+    const [post] = await db.select().from(posts).where(eq(posts.slug, slug));
+    if (!post) throw new PostNotFoundError();
+
+    await db.delete(posts).where(eq(posts.slug, slug));
+  } catch (error) {
+    if (error instanceof PostNotFoundError) throw error;
+    throw new DatabaseError("Failed to delete post by slug.");
+  }
+};
+
+export const archivePostBySlug = async (slug: string) => {
+  try {
+    const [post] = await db.select().from(posts).where(eq(posts.slug, slug));
+    if (!post) {
+      throw new PostNotFoundError();
+    }
+
+    await db
+      .update(posts)
+      .set({ status: PostStatus.Archived })
+      .where(eq(posts.slug, slug));
+  } catch (error) {
+    if (error instanceof PostNotFoundError) throw error;
+    throw new DatabaseError("Failed to archive post by slug.");
   }
 };
 
