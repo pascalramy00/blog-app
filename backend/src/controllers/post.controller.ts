@@ -29,8 +29,6 @@ export const getAllPosts = async (req: Request, res: Response) => {
       .leftJoin(post_categories, eq(posts.id, post_categories.post_id))
       .leftJoin(categories, eq(post_categories.category_id, categories.id));
 
-    console.log("allPosts ready");
-
     // Group posts by their ID and aggregate categories
     const postsMap = allPosts.reduce((acc, post) => {
       if (!acc[post.id]) {
@@ -54,12 +52,24 @@ export const getAllPosts = async (req: Request, res: Response) => {
     // Convert the map back to an array
     const postsWithDetails = Object.values(postsMap);
 
-    console.log(postsWithDetails);
-
     res.status(200).json(postsWithDetails);
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: "Failed to fetch posts." });
+  }
+};
+
+export const getPost = async (req: Request, res: Response): Promise<any> => {
+  const { slug } = req.params;
+  try {
+    const post = await db.select().from(posts).where(eq(posts.slug, slug));
+
+    if (!post) {
+      return res.status(404).json({ error: "Post not found." });
+    }
+    res.status(200).json(post);
+  } catch (e) {
+    res.status(500).json({ error: "Failed to fetch post." });
   }
 };
 
@@ -77,8 +87,8 @@ export const createPost = async (req: Request, res: Response): Promise<any> => {
   // Generate a slug from the title
   let slug = title
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-") // Replace non-alphanumeric characters with hyphens
-    .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 
   try {
     // Check if the author exists
