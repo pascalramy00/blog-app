@@ -6,6 +6,13 @@ import {
 } from "../services/author.services";
 import { InputValidationError } from "../errors";
 
+export interface UpdateAuthorObject {
+  first_name?: string;
+  last_name?: string;
+  bio?: string;
+  profile_picture_url?: string;
+}
+
 export const getAllAuthorsHandler = async (req: Request, res: Response) => {
   try {
     res.json(await fetchAllAuthors());
@@ -66,3 +73,17 @@ export const createAuthorHandler = async (
     throw error;
   }
 };
+
+// export const updateAuthorHandler = async (req: Request, res: Response) => {
+//   const { slug } = req.params;
+//   const updateObj: UpdateAuthorObject = Object.fromEntries(
+//     Object.entries(req.body).filter(([_, value]) => value !== undefined)
+//   );
+
+//   try {
+//     const [updatedAuthor] = await updateAuthorBySlug(slug, updateObj);
+//     res.status(200).json({ message: "Author updated successfully." });
+//   } catch (error) {
+//     throw error;
+//   }
+// };
