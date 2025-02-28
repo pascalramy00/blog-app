@@ -5,5 +5,5 @@
       "@shared/*": ["./shared/*"]
     }
   },
-  "include": ["backend", "frontend", "shared"]
+  "include": ["backend", "frontend", "shared/**/*"]
 }

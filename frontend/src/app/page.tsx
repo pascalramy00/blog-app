@@ -1,4 +1,4 @@
-import type { PostWithAuthorAndCategories } from "@/lib/types/types";
+import type { PostWithAuthorAndCategories } from "@shared/types";
 import { fetchPosts } from "@/utils/api";
 import Posts from "@/components/Posts";
 // import ClientPosts from "@/components/ClientPosts";

@@ -1,11 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import type { Post } from "@/lib/types/types";
+import type { PostWithAuthorAndCategories } from "@shared/types";
 import { fetchPosts } from "@/utils/api";
 
-const ClientPosts = ({ initialPosts }: { initialPosts: Post[] }) => {
-  const [posts, setPosts] = useState<Post[]>(initialPosts);
+const ClientPosts = ({
+  initialPosts,
+}: {
+  initialPosts: PostWithAuthorAndCategories[];
+}) => {
+  const [posts, setPosts] =
+    useState<PostWithAuthorAndCategories[]>(initialPosts);
 
   const loadPosts = async () => {
     try {

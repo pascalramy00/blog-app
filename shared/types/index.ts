@@ -24,7 +24,7 @@ export interface Post {
   cover_image_url?: string | null;
   author_id: number;
   created_at: Date;
-  updated_at: Date;
+  updated_at?: Date;
 }
 
 export interface Category {
