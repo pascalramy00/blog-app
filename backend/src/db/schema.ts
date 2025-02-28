@@ -7,6 +7,7 @@ import {
   integer,
   primaryKey,
   index,
+  boolean,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
@@ -28,7 +29,6 @@ export const posts = pgTable(
   {
     id: serial("id").primaryKey(),
     title: varchar("title", { length: 255 }).notNull(),
-    status: varchar("status", { length: 50 }).default("draft").notNull(),
     slug: varchar("slug", { length: 255 }).unique().notNull(),
     content: text("content").notNull(),
     excerpt: text("excerpt"),
@@ -36,10 +36,13 @@ export const posts = pgTable(
     author_id: integer("author_id")
       .references(() => users.id, { onDelete: "cascade" })
       .notNull(),
+    isDeleted: boolean("is_deleted").default(false).notNull(),
+    isArchived: boolean("is_archived").default(false).notNull(),
+    isDraft: boolean("is_draft").default(true).notNull(),
     created_at: timestamp("created_at").defaultNow().notNull(),
     updated_at: timestamp("updated_at").defaultNow().notNull(),
   },
-  (table) => [index("slug_idx").on(table.slug)] // Create an index on slug)
+  (table) => [index("slug_idx").on(table.slug)]
 );
 
 export const categories = pgTable("categories", {

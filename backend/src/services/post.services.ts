@@ -9,7 +9,14 @@ import {
   AuthorNotFoundError,
 } from "../errors";
 
-import { PostStatus } from "../../../shared/enums";
+export interface UpdateObject {
+  title?: string;
+  content?: string;
+  excerpt?: string;
+  isDraft?: boolean;
+  isArchived?: boolean;
+  isDeleted?: boolean;
+}
 
 // Fetch all posts with author and category details
 export const fetchAllPosts = async () => {
@@ -22,6 +29,9 @@ export const fetchAllPosts = async () => {
         slug: posts.slug,
         created_at: posts.created_at,
         updated_at: posts.updated_at,
+        isDraft: posts.isDraft,
+        isArchived: posts.isArchived,
+        isDeleted: posts.isDeleted,
         author: {
           id: users.id,
           username: users.username,
@@ -65,8 +75,10 @@ export const fetchAllPosts = async () => {
 
 // Fetch a single post by slug
 export const fetchPostBySlug = async (slug: string) => {
+  console.log(slug);
   try {
     const [post] = await db.select().from(posts).where(eq(posts.slug, slug));
+    console.log(post);
     if (!post) {
       throw new PostNotFoundError();
     }
@@ -78,10 +90,11 @@ export const fetchPostBySlug = async (slug: string) => {
 };
 
 export const deletePostBySlug = async (slug: string) => {
+  console.log(slug);
   try {
     const [post] = await db.select().from(posts).where(eq(posts.slug, slug));
     if (!post) throw new PostNotFoundError();
-
+    console.log(post);
     await db.delete(posts).where(eq(posts.slug, slug));
   } catch (error) {
     if (error instanceof PostNotFoundError) throw error;
@@ -89,20 +102,34 @@ export const deletePostBySlug = async (slug: string) => {
   }
 };
 
-export const archivePostBySlug = async (slug: string) => {
+export const updatePostBySlug = async (
+  slug: string,
+  updateObj: UpdateObject
+) => {
+  const { title, content, excerpt, isDraft, isArchived, isDeleted } = updateObj;
+
   try {
     const [post] = await db.select().from(posts).where(eq(posts.slug, slug));
-    if (!post) {
-      throw new PostNotFoundError();
-    }
+    if (!post) throw new PostNotFoundError();
 
-    await db
+    const updatedPost = await db
       .update(posts)
-      .set({ status: PostStatus.Archived })
-      .where(eq(posts.slug, slug));
+      .set({
+        ...(title !== undefined && { title }),
+        ...(content !== undefined && { content }),
+        ...(excerpt !== undefined && { excerpt }),
+        ...(isDraft !== undefined && { isDraft }),
+        ...(isArchived !== undefined && { isArchived }),
+        ...(isDeleted !== undefined && { isDeleted }),
+        updated_at: new Date(),
+      })
+      .where(eq(posts.slug, slug))
+      .returning();
+
+    return updatedPost;
   } catch (error) {
     if (error instanceof PostNotFoundError) throw error;
-    throw new DatabaseError("Failed to archive post by slug.");
+    throw new DatabaseError("Failed to update post by slug.");
   }
 };
 
@@ -112,8 +139,9 @@ export const createNewPost = async (
   content: string,
   author_id: number,
   category_ids: number[],
-  excerpt?: string,
-  cover_image_url?: string
+  isDraft: boolean,
+  excerpt: string,
+  cover_image_url: string
 ) => {
   try {
     let slug = title
@@ -150,7 +178,8 @@ export const createNewPost = async (
         content,
         author_id,
         slug,
-        status: "draft", // Default status
+        isDeleted: false,
+        isDraft: isDraft ?? true,
         created_at: new Date(),
         updated_at: new Date(),
         cover_image_url,

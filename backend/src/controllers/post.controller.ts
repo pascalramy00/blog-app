@@ -3,6 +3,8 @@ import {
   fetchAllPosts,
   fetchPostBySlug,
   createNewPost,
+  deletePostBySlug,
+  updatePostBySlug,
 } from "../services/post.services";
 import { InputValidationError } from "../errors";
 
@@ -15,8 +17,18 @@ export const getAllPosts = async (req: Request, res: Response) => {
   }
 };
 
+export const deletePost = async (req: Request, res: Response) => {
+  const { slug } = req.params;
+  try {
+    deletePostBySlug(slug);
+    res.status(200).json();
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getPost = async (req: Request, res: Response): Promise<any> => {
-  const { slug } = await req.params;
+  const { slug } = req.params;
   try {
     const post = await fetchPostBySlug(slug);
     if (!post) {
@@ -28,9 +40,33 @@ export const getPost = async (req: Request, res: Response): Promise<any> => {
   }
 };
 
+export const updatePost = async (req: Request, res: Response): Promise<any> => {
+  const { slug } = req.params;
+
+  const updateObj = Object.fromEntries(
+    Object.entries(req.body).filter(([_, value]) => value !== undefined)
+  );
+
+  try {
+    const [updatedPost] = await updatePostBySlug(slug, updateObj);
+    res
+      .status(200)
+      .json({ message: "Post updated successfully", post: updatedPost });
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const createPost = async (req: Request, res: Response): Promise<any> => {
-  const { title, content, author_id, category_ids, excerpt, cover_image_url } =
-    req.body;
+  const {
+    title,
+    content,
+    author_id,
+    category_ids,
+    excerpt,
+    cover_image_url,
+    isDraft,
+  } = req.body;
 
   try {
     if (!title || !content || !author_id) {
@@ -45,7 +81,8 @@ export const createPost = async (req: Request, res: Response): Promise<any> => {
       author_id,
       category_ids,
       excerpt,
-      cover_image_url
+      cover_image_url,
+      isDraft
     );
     res.status(201).json(newPost);
   } catch (error) {
