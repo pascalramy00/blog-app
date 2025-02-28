@@ -1,6 +1,6 @@
 import React from "react";
 import { fetchPost } from "@/utils/api";
-import type { Post } from "@shared/types";
+import type { Post } from "../../../../../shared/types";
 
 interface PageProps {
   params: Promise<{ slug: string }>;

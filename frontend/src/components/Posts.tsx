@@ -18,9 +18,9 @@ const Posts = ({ posts }: { posts: PostWithAuthorAndCategories[] }) => {
         }) => {
           return (
             <li key={id} className="border border-black mb-4">
-              <h2 className="font-bold">{title}</h2>
+              <h2 className="font-bold text-3xl">{title}</h2>
               <p>{new Date(created_at).toDateString()}</p>
-              <Link href={`/posts/${slug}`}>Read</Link>
+              <Link href={`/blog/${slug}`}>Read</Link>
               <p>
                 by{" "}
                 {first_name && last_name
