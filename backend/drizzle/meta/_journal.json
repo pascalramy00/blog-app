@@ -43,6 +43,13 @@
       "when": 1740762697644,
       "tag": "0005_busy_hercules",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1740788625168,
+      "tag": "0006_robust_kitty_pryde",
+      "breakpoints": true
     }
   ]
 }

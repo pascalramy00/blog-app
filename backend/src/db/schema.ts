@@ -13,10 +13,9 @@ import {
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   email: varchar("email", { length: 255 }).unique().notNull(),
-  username: varchar("username", { length: 50 }).unique().notNull(),
   password_hash: varchar("password_hash", { length: 255 }).notNull(),
-  first_name: varchar("first_name", { length: 100 }),
-  last_name: varchar("last_name", { length: 100 }),
+  first_name: varchar("first_name", { length: 100 }).notNull(),
+  last_name: varchar("last_name", { length: 100 }).notNull(),
   bio: text("bio"),
   created_at: timestamp("created_at").defaultNow(),
   updated_at: timestamp("updated_at").defaultNow(),

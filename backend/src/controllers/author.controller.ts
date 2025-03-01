@@ -24,9 +24,9 @@ export const getAllAuthors = async (req: Request, res: Response) => {
 };
 
 export const deleteAuthor = async (req: Request, res: Response) => {
-  const { username } = req.params;
+  const { email } = req.params;
   try {
-    const author = await deleteAuthorByEmail(username);
+    const author = await deleteAuthorByEmail(email);
     res
       .status(200)
       .json({ message: "Author deleted successfully.", author: author });
@@ -36,9 +36,9 @@ export const deleteAuthor = async (req: Request, res: Response) => {
 };
 
 export const getAuthor = async (req: Request, res: Response) => {
-  const { username } = await req.params;
+  const { email } = await req.params;
   try {
-    const [author] = await fetchAuthorByEmail(username);
+    const [author] = await fetchAuthorByEmail(email);
     res.status(200).json(author);
   } catch (error) {
     throw error;
@@ -53,28 +53,19 @@ export const createAuthor = async (
     email,
     password_hash,
     bio,
-    username,
     first_name,
     last_name,
     profile_picture_url,
   } = req.body;
 
   try {
-    if (
-      !email ||
-      !password_hash ||
-      !bio ||
-      !username ||
-      !first_name ||
-      !last_name
-    ) {
+    if (!email || !password_hash || !bio || !first_name || !last_name) {
       throw new InputValidationError("All fields are required.");
     }
     const newAuthor = await createAuthorHandler(
       email,
       password_hash,
       bio,
-      username,
       first_name,
       last_name,
       profile_picture_url

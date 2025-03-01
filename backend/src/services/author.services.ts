@@ -82,7 +82,6 @@ export const createAuthorHandler = async (
   email: string,
   password_hash: string,
   bio: string,
-  username: string,
   first_name: string,
   last_name: string,
   profile_picture_url?: string
@@ -97,7 +96,6 @@ export const createAuthorHandler = async (
         email,
         password_hash,
         bio,
-        username,
         profile_picture_url,
         first_name,
         last_name,

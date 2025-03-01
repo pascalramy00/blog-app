@@ -34,7 +34,6 @@ export const fetchAllPosts = async () => {
         isDeleted: posts.isDeleted,
         author: {
           id: users.id,
-          username: users.username,
           first_name: users.first_name,
           last_name: users.last_name,
         },
@@ -222,7 +221,6 @@ export const createNewPost = async (
       ...newPost,
       author: {
         id: author.id,
-        username: author.username,
         first_name: author.first_name,
         last_name: author.last_name,
       },
