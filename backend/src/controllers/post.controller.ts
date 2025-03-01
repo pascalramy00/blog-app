@@ -79,10 +79,10 @@ export const createPost = async (req: Request, res: Response): Promise<any> => {
       title,
       content,
       author_id,
-      category_ids,
       excerpt,
-      cover_image_url,
-      isDraft
+      category_ids,
+      isDraft,
+      cover_image_url
     );
     res.status(201).json(newPost);
   } catch (error) {

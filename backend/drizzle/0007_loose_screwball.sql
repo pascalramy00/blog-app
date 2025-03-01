@@ -1,0 +1,1 @@
+ALTER TABLE "posts" ALTER COLUMN "excerpt" SET DEFAULT '';

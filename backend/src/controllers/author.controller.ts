@@ -38,7 +38,7 @@ export const deleteAuthor = async (req: Request, res: Response) => {
 export const getAuthor = async (req: Request, res: Response) => {
   const { email } = await req.params;
   try {
-    const [author] = await fetchAuthorByEmail(email);
+    const author = await fetchAuthorByEmail(email);
     res.status(200).json(author);
   } catch (error) {
     throw error;

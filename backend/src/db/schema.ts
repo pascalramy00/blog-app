@@ -30,7 +30,7 @@ export const posts = pgTable(
     title: varchar("title", { length: 255 }).notNull(),
     slug: varchar("slug", { length: 255 }).unique().notNull(),
     content: text("content").notNull(),
-    excerpt: text("excerpt"),
+    excerpt: text("excerpt").default(""),
     cover_image_url: varchar("cover_image_url", { length: 255 }),
     author_id: integer("author_id")
       .references(() => users.id, { onDelete: "cascade" })

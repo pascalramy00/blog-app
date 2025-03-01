@@ -74,10 +74,8 @@ export const fetchAllPosts = async () => {
 
 // Fetch a single post by slug
 export const fetchPostBySlug = async (slug: string) => {
-  console.log(slug);
   try {
     const [post] = await db.select().from(posts).where(eq(posts.slug, slug));
-    console.log(post);
     if (!post) {
       throw new PostNotFoundError();
     }
@@ -136,9 +134,9 @@ export const createNewPost = async (
   title: string,
   content: string,
   author_id: number,
+  excerpt: string,
   category_ids: number[],
   isDraft: boolean,
-  excerpt: string,
   cover_image_url: string
 ) => {
   try {
@@ -176,12 +174,13 @@ export const createNewPost = async (
         content,
         author_id,
         slug,
+        excerpt,
         isDeleted: false,
         isDraft: isDraft ?? true,
+        isArchived: false,
         created_at: new Date(),
         updated_at: new Date(),
         cover_image_url,
-        excerpt,
       })
       .returning();
 
@@ -232,6 +231,6 @@ export const createNewPost = async (
       error instanceof InvalidCategoryIdsError
     )
       throw error;
-    throw new DatabaseError("Failed to create post.");
+    throw error;
   }
 };

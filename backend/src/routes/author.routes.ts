@@ -9,8 +9,8 @@ import {
 const router = express.Router();
 
 router.get("/", getAllAuthors);
-router.get("/:username", getAuthor);
+router.get("/:email", getAuthor);
 router.post("/", createAuthor);
-router.delete("/:username", deleteAuthor);
+router.delete("/:email", deleteAuthor);
 
 export default router;

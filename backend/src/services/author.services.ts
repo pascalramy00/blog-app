@@ -87,7 +87,12 @@ export const createAuthorHandler = async (
   profile_picture_url?: string
 ) => {
   try {
-    const existingAuthor = await fetchAuthorByEmail(email);
+    const [existingAuthor] = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
+    console.log("the author", existingAuthor);
     if (existingAuthor) throw new InputValidationError("Email already in use.");
 
     const [newAuthor] = await db
@@ -104,9 +109,9 @@ export const createAuthorHandler = async (
 
     return newAuthor;
   } catch (error) {
-    if (error instanceof AuthorNotFoundError) {
+    if (error instanceof AuthorNotFoundError || InputValidationError) {
       throw error;
     }
-    throw new DatabaseError("Failed to fetch author by username.");
+    throw new DatabaseError("Failed to create author.");
   }
 };

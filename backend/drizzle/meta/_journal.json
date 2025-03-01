@@ -50,6 +50,13 @@
       "when": 1740788625168,
       "tag": "0006_robust_kitty_pryde",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1740809560633,
+      "tag": "0007_loose_screwball",
+      "breakpoints": true
     }
   ]
 }
