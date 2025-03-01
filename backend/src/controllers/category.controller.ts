@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { InputValidationError } from "../errors";
 import {
   createNewCategory,
   fetchAllCategories,

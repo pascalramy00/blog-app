@@ -27,6 +27,7 @@ export interface Post {
   author_id: number;
   created_at: Date;
   updated_at: Date;
+  category_ids: number[];
 }
 
 export interface Category {

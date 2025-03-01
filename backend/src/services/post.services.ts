@@ -1,7 +1,8 @@
-// services/postService.ts
 import { db } from "../db";
 import { posts, users, categories, post_categories } from "../db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, inArray } from "drizzle-orm";
+import { generateSlug } from "../utils/generateSlug";
+import type { Post } from "../../../shared/types";
 import {
   DatabaseError,
   PostNotFoundError,
@@ -9,8 +10,6 @@ import {
   AuthorNotFoundError,
   InputValidationError,
 } from "../errors";
-
-import type { Post } from "../../../shared/types";
 
 // Fetch all posts with author and category details
 export const fetchAllPosts = async () => {
@@ -31,36 +30,18 @@ export const fetchAllPosts = async () => {
           first_name: users.first_name,
           last_name: users.last_name,
         },
-        category_id: categories.id,
-        category_name: categories.name,
-        category_slug: categories.slug,
+        categories: {
+          id: categories.id,
+          name: categories.name,
+          slug: categories.slug,
+        },
       })
       .from(posts)
       .leftJoin(users, eq(posts.author_id, users.id))
       .leftJoin(post_categories, eq(posts.id, post_categories.post_id))
       .leftJoin(categories, eq(post_categories.category_id, categories.id));
 
-    // Group posts by ID and aggregate categories
-    const postsMap = allPosts.reduce((acc, post) => {
-      if (!acc[post.id]) {
-        acc[post.id] = {
-          ...post,
-          categories: [],
-        };
-      }
-
-      if (post.category_id) {
-        acc[post.id].categories.push({
-          id: post.category_id,
-          name: post.category_name,
-          slug: post.category_slug,
-        });
-      }
-
-      return acc;
-    }, {} as Record<number, any>);
-
-    return Object.values(postsMap);
+    return allPosts;
   } catch (error) {
     throw new DatabaseError("Failed to fetch posts.");
   }
@@ -106,6 +87,21 @@ export const updatePostBySlug = async (
   try {
     const [post] = await db.select().from(posts).where(eq(posts.slug, slug));
     if (!post) throw new PostNotFoundError();
+
+    // Modify slug if title provided
+    if (filteredUpdates.title) {
+      filteredUpdates.slug = await generateSlug(
+        filteredUpdates.title as string,
+        posts,
+        posts.slug
+      );
+    }
+
+    // Update categories if provided
+    if (updateObj.category_ids) {
+      const categoryIds = updateObj.category_ids.map((id) => Number(id));
+      await updateCategories(post.id, categoryIds);
+    }
 
     const updatedPost = await db
       .update(posts)
@@ -153,12 +149,8 @@ export const createNewPost = async (postData: {
     );
 
   try {
-    let slug = title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
+    const slug = await generateSlug(title, posts, posts.slug);
 
-    // Check if the author exists
     const [author] = await db
       .select()
       .from(users)
@@ -166,17 +158,6 @@ export const createNewPost = async (postData: {
 
     if (!author) {
       throw new AuthorNotFoundError();
-    }
-
-    // Check if a post with the same slug already exists
-    const [existingPost] = await db
-      .select()
-      .from(posts)
-      .where(eq(posts.slug, slug));
-
-    // If the slug exists, append a unique identifier (e.g., timestamp)
-    if (existingPost) {
-      slug = `${slug}-${Date.now()}`;
     }
 
     // Insert the new post
@@ -246,5 +227,51 @@ export const createNewPost = async (postData: {
     )
       throw error;
     throw error;
+  }
+};
+
+// Helper function to update categories
+export const updateCategories = async (
+  postId: number,
+  newCategoryIds: number[]
+) => {
+  // Get current categories for the post
+  const currentCategoryIds = (
+    await db
+      .select({ category_id: post_categories.category_id })
+      .from(post_categories)
+      .where(eq(post_categories.post_id, postId))
+  ).map((row) => row.category_id);
+
+  // Find categories to add
+  const categoriesToAdd = newCategoryIds.filter(
+    (id) => !currentCategoryIds.includes(id)
+  );
+
+  // Find categories to remove
+  const categoriesToRemove = currentCategoryIds.filter(
+    (id) => !newCategoryIds.includes(id)
+  );
+
+  // Remove categories that are no longer associated with this post
+  if (categoriesToRemove.length > 0) {
+    await db
+      .delete(post_categories)
+      .where(
+        and(
+          eq(post_categories.post_id, postId),
+          inArray(post_categories.category_id, categoriesToRemove)
+        )
+      );
+  }
+
+  // Add new categories
+  if (categoriesToAdd.length > 0) {
+    await db.insert(post_categories).values(
+      categoriesToAdd.map((categoryId) => ({
+        post_id: postId,
+        category_id: categoryId,
+      }))
+    );
   }
 };
