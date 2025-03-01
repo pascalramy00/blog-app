@@ -57,6 +57,13 @@
       "when": 1740809560633,
       "tag": "0007_loose_screwball",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1740853743829,
+      "tag": "0008_boring_ironclad",
+      "breakpoints": true
     }
   ]
 }

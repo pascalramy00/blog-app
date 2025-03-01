@@ -1,6 +1,7 @@
 import { db } from "../db";
 import { categories } from "../db/schema";
 import { eq, or } from "drizzle-orm";
+import { generateSlug } from "../utils/generateSlug";
 import {
   DuplicateCategoryError,
   DatabaseError,
@@ -21,10 +22,11 @@ export const createNewCategory = async (categoryData: {
   name: string;
   slug: string;
 }) => {
-  const { name, slug } = categoryData;
-  if (!name || !slug)
-    throw new InputValidationError("Category name and slug are required.");
+  const { name } = categoryData;
+  if (!name) throw new InputValidationError("Category name is required.");
   try {
+    const slug = await generateSlug(name, categories, categories.slug);
+
     const existingCategory = await db
       .select()
       .from(categories)

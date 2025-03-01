@@ -7,6 +7,7 @@ import {
   InputValidationError,
 } from "../errors";
 import type { Author } from "../../../shared/types";
+import { generateSlug } from "../utils/generateSlug";
 
 export const fetchAllAuthors = async () => {
   try {
@@ -63,10 +64,17 @@ export const createAuthorHandler = async (authorData: {
 
     if (existingAuthor) throw new InputValidationError("Email already in use.");
 
+    const slug = await generateSlug(
+      `${first_name} ${last_name}`,
+      users,
+      users.slug
+    );
+
     const [newAuthor] = await db
       .insert(users)
       .values({
         email,
+        slug,
         password_hash,
         bio,
         profile_picture_url,
@@ -101,6 +109,14 @@ export const updateAuthorByEmail = async (
   try {
     const author = await fetchAuthorByEmail(email);
     if (!author) throw new AuthorNotFoundError();
+
+    if (filteredUpdates.first_name || filteredUpdates.last_name) {
+      filteredUpdates.slug = await generateSlug(
+        `${filteredUpdates.first_name} ${filteredUpdates.last_name}`,
+        users,
+        users.slug
+      );
+    }
 
     const updatedUser = await db
       .update(users)

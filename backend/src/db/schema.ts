@@ -20,7 +20,10 @@ export const users = pgTable("users", {
   created_at: timestamp("created_at").defaultNow(),
   updated_at: timestamp("updated_at").defaultNow(),
   profile_picture_url: varchar("profile_picture_url", { length: 255 }),
-  role: varchar("role", { length: 50 }).default("user").notNull(),
+  // role: varchar("role", { length: 50 }).default("user").notNull(),
+  isAdmin: boolean("is_admin").default(false).notNull(),
+  isAuthor: boolean("is_author").default(false).notNull(),
+  slug: varchar("slug", { length: 255 }).unique().notNull(),
 });
 
 export const posts = pgTable(
