@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import {
   createAuthorHandler,
   deleteAuthorByEmail,
@@ -6,24 +6,24 @@ import {
   fetchAuthorByEmail,
   updateAuthorByEmail,
 } from "../services/author.services";
-import { InputValidationError } from "../errors";
 
-export interface UpdateAuthorObject {
-  first_name?: string;
-  last_name?: string;
-  bio?: string;
-  profile_picture_url?: string;
-}
-
-export const getAllAuthors = async (req: Request, res: Response) => {
+export const getAllAuthors = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     res.json(await fetchAllAuthors());
   } catch (error) {
-    throw error;
+    next(error);
   }
 };
 
-export const deleteAuthor = async (req: Request, res: Response) => {
+export const deleteAuthor = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { email } = req.params;
   try {
     const author = await deleteAuthorByEmail(email);
@@ -31,61 +31,50 @@ export const deleteAuthor = async (req: Request, res: Response) => {
       .status(200)
       .json({ message: "Author deleted successfully.", author: author });
   } catch (error) {
-    throw error;
+    next(error);
   }
 };
 
-export const getAuthor = async (req: Request, res: Response) => {
+export const getAuthor = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { email } = await req.params;
   try {
     const author = await fetchAuthorByEmail(email);
     res.status(200).json(author);
   } catch (error) {
-    throw error;
+    next(error);
   }
 };
 
 export const createAuthor = async (
   req: Request,
-  res: Response
+  res: Response,
+  next: NextFunction
 ): Promise<any> => {
-  const {
-    email,
-    password_hash,
-    bio,
-    first_name,
-    last_name,
-    profile_picture_url,
-  } = req.body;
-
   try {
-    if (!email || !password_hash || !bio || !first_name || !last_name) {
-      throw new InputValidationError("All fields are required.");
-    }
-    const newAuthor = await createAuthorHandler(
-      email,
-      password_hash,
-      bio,
-      first_name,
-      last_name,
-      profile_picture_url
-    );
+    const newAuthor = await createAuthorHandler(req.body);
     res.status(201).json(newAuthor);
   } catch (error) {
-    throw error;
+    next(error);
   }
 };
 
-export const updateAuthorHandler = async (req: Request, res: Response) => {
+export const updateAuthor = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { email } = req.params;
-  const updateObj: UpdateAuthorObject = Object.fromEntries(
-    Object.entries(req.body).filter(([_, value]) => value !== undefined)
-  );
 
   try {
-    const updatedAuthor = await updateAuthorByEmail(email, updateObj);
-    res.status(200).json({ message: "Author updated successfully." });
+    const updatedAuthor = await updateAuthorByEmail(email, req.body);
+    res
+      .status(200)
+      .json({ message: "Author updated successfully.", author: updatedAuthor });
   } catch (error) {
-    throw error;
+    next(error);
   }
 };

@@ -9,41 +9,21 @@ export const errorHandler = (
 ) => {
   console.log("Error:", error);
 
-  if (error instanceof errors.DuplicateCategoryError) {
-    res.status(409).json({ error: error.message });
-  }
+  const errorMap: any = {
+    DuplicateCategoryError: 409,
+    InputValidationError: 400,
+    InvalidCategoryIdsError: 400,
+    NotFoundError: 404,
+    AuthorNotFoundError: 404,
+    PostNotFoundError: 404,
+    UnauthorizedError: 401,
+    ForbiddenError: 403,
+    DatabaseError: 500,
+  };
 
-  if (
-    error instanceof errors.InputValidationError ||
-    error instanceof errors.InvalidCategoryIdsError
-  ) {
-    res.status(400).json({ error: error.message });
-    return;
-  }
+  const statusCode = errorMap[error.constructor.name] || 500;
+  const message =
+    statusCode === 500 ? "An unexpected error occured." : error.message;
 
-  if (
-    error instanceof errors.NotFoundError ||
-    error instanceof errors.AuthorNotFoundError ||
-    error instanceof errors.PostNotFoundError
-  ) {
-    res.status(404).json({ error: error.message });
-    return;
-  }
-
-  if (error instanceof errors.UnauthorizedError) {
-    res.status(401).json({ error: error.message });
-    return;
-  }
-
-  if (error instanceof errors.ForbiddenError) {
-    res.status(403).json({ error: error.message });
-    return;
-  }
-
-  if (error instanceof errors.DatabaseError) {
-    res.status(500).json({ error: "A database error occurred." });
-    return;
-  }
-
-  res.status(500).json({ error: "An unexpected error occurred." });
+  res.status(statusCode).json({ error: message });
 };

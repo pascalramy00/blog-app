@@ -1,30 +1,25 @@
 import { Request, Response } from "express";
 import { InputValidationError } from "../errors";
 import {
-  createCategory,
-  getAllCategories,
+  createNewCategory,
+  fetchAllCategories,
 } from "../services/category.services";
 
-export const createCategoryHandler = async (
+export const createCategory = async (
   req: Request,
   res: Response
 ): Promise<any> => {
-  const { name, slug } = req.body;
-
   try {
-    if (!name || !slug) {
-      throw new InputValidationError("Name and slug are required.");
-    }
-    const newCategory = await createCategory(name, slug);
+    const newCategory = await createNewCategory(req.body);
     res.status(201).json(newCategory);
   } catch (error) {
     throw error;
   }
 };
 
-export const getAllCategoriesHandler = async (req: Request, res: Response) => {
+export const getAllCategories = async (req: Request, res: Response) => {
   try {
-    const allCategories = await getAllCategories();
+    const allCategories = await fetchAllCategories();
     res.status(200).json(allCategories);
   } catch (error) {
     throw error;

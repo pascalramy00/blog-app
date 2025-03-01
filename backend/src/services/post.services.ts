@@ -7,16 +7,10 @@ import {
   PostNotFoundError,
   InvalidCategoryIdsError,
   AuthorNotFoundError,
+  InputValidationError,
 } from "../errors";
 
-export interface UpdateObject {
-  title?: string;
-  content?: string;
-  excerpt?: string;
-  isDraft?: boolean;
-  isArchived?: boolean;
-  isDeleted?: boolean;
-}
+import type { Post } from "../../../shared/types";
 
 // Fetch all posts with author and category details
 export const fetchAllPosts = async () => {
@@ -100,9 +94,14 @@ export const deletePostBySlug = async (slug: string) => {
 
 export const updatePostBySlug = async (
   slug: string,
-  updateObj: UpdateObject
+  updateObj: Partial<Post>
 ) => {
-  const { title, content, excerpt, isDraft, isArchived, isDeleted } = updateObj;
+  const filteredUpdates = Object.fromEntries(
+    Object.entries(updateObj).filter(([_, value]) => value !== undefined)
+  );
+
+  if (Object.keys(filteredUpdates).length === 0)
+    throw new InputValidationError("No valid fields provided for update.");
 
   try {
     const [post] = await db.select().from(posts).where(eq(posts.slug, slug));
@@ -111,12 +110,7 @@ export const updatePostBySlug = async (
     const updatedPost = await db
       .update(posts)
       .set({
-        ...(title !== undefined && { title }),
-        ...(content !== undefined && { content }),
-        ...(excerpt !== undefined && { excerpt }),
-        ...(isDraft !== undefined && { isDraft }),
-        ...(isArchived !== undefined && { isArchived }),
-        ...(isDeleted !== undefined && { isDeleted }),
+        ...filteredUpdates,
         updated_at: new Date(),
       })
       .where(eq(posts.slug, slug))
@@ -124,21 +118,40 @@ export const updatePostBySlug = async (
 
     return updatedPost;
   } catch (error) {
-    if (error instanceof PostNotFoundError) throw error;
+    if (
+      error instanceof PostNotFoundError ||
+      error instanceof InputValidationError
+    )
+      throw error;
     throw new DatabaseError("Failed to update post by slug.");
   }
 };
 
 // Create a new post
-export const createNewPost = async (
-  title: string,
-  content: string,
-  author_id: number,
-  excerpt: string,
-  category_ids: number[],
-  isDraft: boolean,
-  cover_image_url: string
-) => {
+export const createNewPost = async (postData: {
+  title: string;
+  content: string;
+  author_id: number;
+  excerpt: string;
+  category_ids: number[];
+  isDraft: boolean;
+  cover_image_url: string;
+}) => {
+  const {
+    title,
+    author_id,
+    content,
+    category_ids,
+    isDraft,
+    excerpt,
+    cover_image_url,
+  } = postData;
+
+  if (!title || !content || !author_id)
+    throw new InputValidationError(
+      "Title, content, and author_id are required."
+    );
+
   try {
     let slug = title
       .toLowerCase()
@@ -228,7 +241,8 @@ export const createNewPost = async (
   } catch (error) {
     if (
       error instanceof AuthorNotFoundError ||
-      error instanceof InvalidCategoryIdsError
+      error instanceof InvalidCategoryIdsError ||
+      error instanceof InputValidationError
     )
       throw error;
     throw error;
