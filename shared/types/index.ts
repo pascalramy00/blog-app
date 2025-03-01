@@ -5,26 +5,28 @@ export interface User {
   email: string;
   username: string;
   password_hash: string;
-  first_name?: string | null;
-  last_name?: string | null;
-  bio?: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  bio: string | null;
   created_at: Date;
   updated_at: Date;
-  profile_picture_url?: string | null;
+  profile_picture_url: string | null;
   role: UserRole;
 }
 
 export interface Post {
   id: number;
   title: string;
-  status: PostStatus;
   slug: string;
   content: string;
-  excerpt?: string | null;
-  cover_image_url?: string | null;
+  isDraft: boolean;
+  isDeleted: boolean;
+  isArchived: boolean;
+  excerpt: string | null;
+  cover_image_url: string | null;
   author_id: number;
   created_at: Date;
-  updated_at?: Date;
+  updated_at: Date;
 }
 
 export interface Category {
