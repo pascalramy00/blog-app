@@ -11,7 +11,9 @@ export interface User {
   created_at: Date;
   updated_at: Date;
   profile_picture_url: string | null;
-  role: UserRole;
+  isAdmin: boolean;
+  isAuthor: boolean;
+  slug: string;
 }
 
 export interface Post {
