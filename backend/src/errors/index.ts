@@ -2,6 +2,7 @@ export * from "./authorErrors";
 export * from "./databaseErrors";
 export * from "./postErrors";
 export * from "./categoryErrors";
+export * from "./authErrors";
 
 export class InputValidationError extends Error {
   constructor(message: string = "Invalid input provided.") {

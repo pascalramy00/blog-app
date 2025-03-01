@@ -18,6 +18,9 @@ export const errorHandler = (
     PostNotFoundError: 404,
     UnauthorizedError: 401,
     ForbiddenError: 403,
+    InvalidCredentialsError: 401,
+    InvalidTokenError: 403,
+    MissingTokenError: 401,
     DatabaseError: 500,
   };
 
