@@ -50,7 +50,33 @@ export const fetchAllPosts = async () => {
 // Fetch a single post by slug
 export const fetchPostBySlug = async (slug: string) => {
   try {
-    const [post] = await db.select().from(posts).where(eq(posts.slug, slug));
+    const [post] = await db
+      .select({
+        id: posts.id,
+        title: posts.title,
+        content: posts.content,
+        slug: posts.slug,
+        created_at: posts.created_at,
+        updated_at: posts.updated_at,
+        isDraft: posts.isDraft,
+        isArchived: posts.isArchived,
+        isDeleted: posts.isDeleted,
+        author: {
+          id: users.id,
+          first_name: users.first_name,
+          last_name: users.last_name,
+        },
+        categories: {
+          id: categories.id,
+          name: categories.name,
+          slug: categories.slug,
+        },
+      })
+      .from(posts)
+      .where(eq(posts.slug, slug))
+      .leftJoin(users, eq(posts.author_id, users.id))
+      .leftJoin(post_categories, eq(posts.id, post_categories.post_id))
+      .leftJoin(categories, eq(post_categories.category_id, categories.id));
     if (!post) {
       throw new PostNotFoundError();
     }
