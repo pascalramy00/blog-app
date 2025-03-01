@@ -13,7 +13,6 @@ export async function fetchPosts(): Promise<PostWithAuthorAndCategories[]> {
   if (!response.ok) {
     throw new Error("Failed to fetch posts.");
   }
-
   return response.json();
 }
 
