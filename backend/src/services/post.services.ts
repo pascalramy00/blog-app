@@ -90,12 +90,11 @@ export const fetchPostBySlug = async (slug: string) => {
 };
 
 export const deletePostBySlug = async (slug: string) => {
-  console.log(slug);
   try {
     const [post] = await db.select().from(posts).where(eq(posts.slug, slug));
     if (!post) throw new PostNotFoundError();
-    console.log(post);
     await db.delete(posts).where(eq(posts.slug, slug));
+    return post;
   } catch (error) {
     if (error instanceof PostNotFoundError) throw error;
     throw new DatabaseError("Failed to delete post by slug.");

@@ -1,7 +1,40 @@
 import { db } from "../db";
 import { users } from "../db/schema";
 import { eq } from "drizzle-orm";
-import { DatabaseError, AuthorNotFoundError } from "../errors";
+import {
+  DatabaseError,
+  AuthorNotFoundError,
+  InputValidationError,
+} from "../errors";
+import { UpdateAuthorObject } from "../controllers/author.controller";
+
+export const updateAuthorByEmail = async (
+  email: string,
+  updateObj: UpdateAuthorObject
+) => {
+  const { first_name, last_name, bio, profile_picture_url } = updateObj;
+  try {
+    const author = fetchAuthorByEmail(email);
+    if (!author) throw new AuthorNotFoundError();
+
+    const updatedUser = await db
+      .update(users)
+      .set({
+        ...(first_name !== undefined && { first_name }),
+        ...(last_name !== undefined && { last_name }),
+        ...(bio !== undefined && { bio }),
+        ...(profile_picture_url !== undefined && { profile_picture_url }),
+        updated_at: new Date(),
+      })
+      .where(eq(users.email, email))
+      .returning();
+
+    return updatedUser;
+  } catch (error) {
+    if (error instanceof AuthorNotFoundError) throw error;
+    throw new DatabaseError("Failed to update author by email.");
+  }
+};
 
 export const fetchAllAuthors = async () => {
   try {
@@ -11,15 +44,41 @@ export const fetchAllAuthors = async () => {
   }
 };
 
-export const fetchAuthorByUsername = async (username: string) => {
+export const deleteAuthorByEmail = async (email: string) => {
   try {
-    return [await db.select().from(users).where(eq(users.username, username))];
+    const [author] = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
+
+    if (!author) throw new AuthorNotFoundError();
+
+    await db.delete(users).where(eq(users.email, email));
+    return author;
   } catch (error) {
-    throw new AuthorNotFoundError();
+    if (error instanceof AuthorNotFoundError) throw error;
+    throw new DatabaseError("Failed to delete author by email.");
   }
 };
 
-export const createAuthor = async (
+export const fetchAuthorByEmail = async (email: string) => {
+  try {
+    const author = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
+
+    if (!author) throw new AuthorNotFoundError();
+    return author;
+  } catch (error) {
+    if (error instanceof AuthorNotFoundError) throw error;
+    throw new DatabaseError("Failed to fetch author by email.");
+  }
+};
+
+export const createAuthorHandler = async (
   email: string,
   password_hash: string,
   bio: string,
@@ -29,6 +88,9 @@ export const createAuthor = async (
   profile_picture_url?: string
 ) => {
   try {
+    const existingAuthor = await fetchAuthorByEmail(email);
+    if (existingAuthor) throw new InputValidationError("Email already in use.");
+
     const [newAuthor] = await db
       .insert(users)
       .values({
