@@ -1,5 +1,4 @@
 export const login = async (email: string, password: string) => {
-  console.log("Sending login request to the backend...");
   const res = await fetch("http://localhost:3001/api/auth/login", {
     method: "POST",
     headers: {

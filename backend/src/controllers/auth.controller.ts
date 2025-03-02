@@ -24,7 +24,6 @@ export const login = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log("Login request received with data:", req.body);
   try {
     const token = await loginHandler(req.body);
     res.cookie("token", token, {
@@ -32,10 +31,8 @@ export const login = async (
       secure: false,
       maxAge: 3600000,
     });
-    console.log("Logged in success! Returning response");
     res.json({ message: "Logged in successfully!" });
   } catch (error) {
-    console.log("Login error: (controller)", error);
     next(error);
   }
 };
@@ -58,7 +55,6 @@ export const verifyAuth = async (req: Request, res: Response) => {
     verifyToken(token);
     return res.json({ authenticated: true });
   } catch (error) {
-    console.log(error);
     res.status(401).json({ authenticated: false });
   }
 };

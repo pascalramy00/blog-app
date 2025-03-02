@@ -71,15 +71,12 @@ export const loginHandler = async (data: {
 }) => {
   const { email, password } = data;
   try {
-    console.log("Looking up the user in the DB...");
     const [user] = await db.select().from(users).where(eq(users.email, email));
     if (!user) {
-      console.log("User not found! inside login handler.");
       throw new InvalidCredentialsError("Invalid credentials.");
     }
 
     if (!(await comparePassword(password, user.password_hash))) {
-      console.log("Wrong password! inside login handler.");
       throw new InvalidCredentialsError("Invalid credentials.");
     }
     return generateToken(user.id);

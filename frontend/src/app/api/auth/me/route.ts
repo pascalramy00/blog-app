@@ -14,7 +14,6 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ authenticated: true });
   } catch (error) {
-    console.log(error);
-    return NextResponse.json({ authenticated: false }, { status: 500 });
+    return NextResponse.json({ authenticated: false, error }, { status: 500 });
   }
 }
