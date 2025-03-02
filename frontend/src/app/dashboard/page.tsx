@@ -1,14 +1,10 @@
-"use client";
-
-import React from "react";
-import { logout } from "@/utils/auth";
+import LogoutButton from "@/components/LogoutButton";
 
 const DashboardPage = () => {
-  const handleLogout = async () => await logout();
   return (
     <div>
       <h2>Protected page</h2>
-      <button onClick={handleLogout}>Logout</button>
+      <LogoutButton></LogoutButton>
     </div>
   );
 };
