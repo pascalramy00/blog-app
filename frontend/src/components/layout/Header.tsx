@@ -9,6 +9,14 @@ export const navLinks = [
     href: "/editor-demo",
     label: "Demo",
   },
+  {
+    href: "/dashboard",
+    label: "Dashboard",
+  },
+  {
+    href: "/login",
+    label: "Log in",
+  },
 ];
 
 const Header = () => {

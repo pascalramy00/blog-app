@@ -8,11 +8,13 @@ export const authenticateUser = (
   next: NextFunction
 ) => {
   const token = req.cookies.token;
+  console.log("MIDD checking the token:::::::::", token);
   if (!token)
     throw new MissingTokenError("Token is required for authentication.");
 
   try {
     const decoded = verifyToken(token);
+    console.log("MIDD decoded::::::::::", decoded);
     req.user = decoded;
     next();
   } catch (error) {
