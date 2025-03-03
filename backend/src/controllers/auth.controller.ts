@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { registerHandler, loginHandler } from "../services/auth.services";
 import { verifyToken } from "../auth/jwtUtils";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 export const register = async (
   req: Request,
@@ -41,7 +42,7 @@ export const logout = async (req: Request, res: Response) => {
   res.clearCookie("token", {
     httpOnly: true,
     secure: false,
-    sameSite: "strict",
+    // sameSite: "strict",
     path: "/",
   });
 
@@ -50,10 +51,14 @@ export const logout = async (req: Request, res: Response) => {
 
 export const verifyAuth = async (req: Request, res: Response) => {
   const token = req.cookies.token;
-  if (!token) return res.status(401).json({ authenticated: false });
+
+  if (!token) {
+    return res.status(401).json({ authenticated: false });
+  }
+
   try {
-    verifyToken(token);
-    return res.json({ authenticated: true });
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+    res.json({ authenticated: true, userId: decoded.userId });
   } catch (error) {
     res.status(401).json({ authenticated: false });
   }

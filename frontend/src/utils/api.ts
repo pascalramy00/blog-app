@@ -24,3 +24,14 @@ export async function fetchPost(slug: string): Promise<Post> {
 
   return response.json();
 }
+
+export async function fetchUserData(token: string) {
+  const response = await fetch(`${API_BASE_URL}/authors/profile`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error("Failed to fetch user data.");
+
+  return response.json();
+}

@@ -33,6 +33,38 @@ export const fetchAuthorByEmail = async (email: string) => {
   }
 };
 
+export const fetchAuthorBySlug = async (slug: string) => {
+  try {
+    const [author] = await db
+      .select()
+      .from(users)
+      .where(eq(users.slug, slug))
+      .limit(1);
+    if (!author) throw new AuthorNotFoundError();
+    return author;
+  } catch (error) {
+    if (error instanceof AuthorNotFoundError) throw error;
+    throw new DatabaseError("Failed to fetch author by slug.");
+  }
+};
+
+export const fetchAuthorById = async (id: number) => {
+  if (!id) throw new InputValidationError("Invalid id.");
+  try {
+    const [author] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, id))
+      .limit(1);
+
+    if (!author) throw new AuthorNotFoundError();
+    return author;
+  } catch (error) {
+    if (error instanceof AuthorNotFoundError) throw error;
+    throw new DatabaseError("Failed to fetch author by ID.");
+  }
+};
+
 export const createAuthorHandler = async (authorData: {
   email: string;
   password_hash: string;

@@ -3,7 +3,8 @@ import {
   createAuthorHandler,
   deleteAuthorByEmail,
   fetchAllAuthors,
-  fetchAuthorByEmail,
+  fetchAuthorById,
+  fetchAuthorBySlug,
   updateAuthorByEmail,
 } from "../services/author.services";
 
@@ -19,30 +20,42 @@ export const getAllAuthors = async (
   }
 };
 
-export const deleteAuthor = async (
+export const getAuthorById = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const { email } = req.params;
+  const id = Number(req.params.id);
   try {
-    const author = await deleteAuthorByEmail(email);
-    res
-      .status(200)
-      .json({ message: "Author deleted successfully.", author: author });
+    const author = await fetchAuthorById(id);
+    res.status(200).json(author);
   } catch (error) {
     next(error);
   }
 };
 
-export const getAuthor = async (
+export const getAuthorBySlug = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const { email } = await req.params;
+  const { slug } = req.params;
   try {
-    const author = await fetchAuthorByEmail(email);
+    const author = await fetchAuthorBySlug(slug);
+    res.status(200).json(author);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAuthorPrivateData = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const user = req.user;
+  try {
+    const author = await fetchAuthorById(user.userId);
     res.status(200).json(author);
   } catch (error) {
     next(error);
@@ -74,6 +87,22 @@ export const updateAuthor = async (
     res
       .status(200)
       .json({ message: "Author updated successfully.", author: updatedAuthor });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteAuthor = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { email } = req.params;
+  try {
+    const author = await deleteAuthorByEmail(email);
+    res
+      .status(200)
+      .json({ message: "Author deleted successfully.", author: author });
   } catch (error) {
     next(error);
   }

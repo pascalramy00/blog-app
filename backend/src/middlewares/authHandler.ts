@@ -7,7 +7,9 @@ export const authenticateUser = (
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.cookies.token;
+  const token =
+    req.cookies.token || req.headers["authorization"]?.replace("Bearer ", "");
+
   if (!token)
     throw new MissingTokenError("Token is required for authentication.");
 
